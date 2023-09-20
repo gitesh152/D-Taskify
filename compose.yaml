@@ -1,0 +1,43 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      MONGO_URI: "mongodb://mongo:27017/taskify"
+      JWT_SECRET: "JWT@123"
+      SOCIOUT_GMAIL_USER: "ansh1996ansh@gmail.com"
+      SOCIOUT_GMAIL_PASSWORD: "qincsjwanqrylhcd"
+    ports:
+      - 5000:5000
+    networks:
+      - mern-app
+    depends_on:
+      - mongo
+      
+  mongo:
+    image: mongo:6
+    ports:
+      - 27017:27017
+    networks:
+      - mern-app
+    volumes:
+      - mongo-data:/data/db
+
+  client:
+      build:
+        context: ./frontend
+        dockerfile: Dockerfile
+      depends_on:
+        - backend
+      ports:
+        - "3000:3000"
+      networks:
+        - mern-app
+
+volumes:
+  mongo-data:
+
+networks:
+  mern-app:
+    driver: bridge
